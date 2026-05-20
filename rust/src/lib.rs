@@ -1,14 +1,16 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use jni::objects::{JByteArray, JClass};
+use jni::sys::jint;
+use jni::JNIEnv;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_day_pithos_yuvutils_YUVUtils_getLength(
+    env: JNIEnv,
+    _class: JClass,
+    input: JByteArray,
+) -> jint {
+    let data = env
+        .convert_byte_array(input)
+        .unwrap();
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+    data.len() as jint
 }
