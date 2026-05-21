@@ -35,30 +35,15 @@ public class YuvUtils {
             String resourcePath =
                     "/native/" + platform + "/" + libName;
 
-            System.out.println("Loading native lib: " + resourcePath);
-
-            InputStream in =
-                    YuvUtils.class.getResourceAsStream(resourcePath);
+            InputStream in = YuvUtils.class.getResourceAsStream(resourcePath);
 
             if (in == null) {
-                throw new RuntimeException(
-                        "Native library not found: " + resourcePath
-                );
+                throw new RuntimeException("Native library not found: " + resourcePath);
             }
 
-            Path temp = Files.createTempFile(
-                    "yuvutils-",
-                    libName
-            );
-
+            Path temp = Files.createTempFile("yuvutils-", libName);
             temp.toFile().deleteOnExit();
-
-            Files.copy(
-                    in,
-                    temp,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
+            Files.copy(in, temp, StandardCopyOption.REPLACE_EXISTING);
             System.load(temp.toAbsolutePath().toString());
 
         } catch (Exception e) {
@@ -67,7 +52,9 @@ public class YuvUtils {
     }
 
     public static native byte[] rgbToYuv420(byte[] rgb, int width, int height);
+
     public static native byte[] bgrToYuv420(byte[] rgb, int width, int height, int stride);
+
     public static native void bgrToYuv420Direct(ByteBuffer bgr, ByteBuffer out, int width, int height, int stride);
 
 }
