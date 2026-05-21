@@ -34,9 +34,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
-# native library
-src/main/resources/natives/*
-
-# builds
-out/*

@@ -22,4 +22,181 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Rust build -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+
+                <executions>
+
+                    <!-- Linux -->
+                    <execution>
+                        <id>build-linux</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <workingDirectory>../rust</workingDirectory>
+                            <executable>cargo</executable>
+
+                            <arguments>
+                                <argument>zigbuild</argument>
+                                <argument>--release</argument>
+                                <argument>--target</argument>
+                                <argument>x86_64-unknown-linux-gnu</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- Windows -->
+                    <execution>
+                        <id>build-windows</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <workingDirectory>../rust</workingDirectory>
+                            <executable>cargo</executable>
+
+                            <arguments>
+                                <argument>zigbuild</argument>
+                                <argument>--release</argument>
+                                <argument>--target</argument>
+                                <argument>x86_64-pc-windows-gnu</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                    <!-- Mac -->
+                    <execution>
+                        <id>build-mac</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+
+                        <configuration>
+                            <workingDirectory>../rust</workingDirectory>
+                            <executable>cargo</executable>
+
+                            <arguments>
+                                <argument>zigbuild</argument>
+                                <argument>--release</argument>
+                                <argument>--target</argument>
+                                <argument>aarch64-apple-darwin</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- Copy native libs -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+
+                <executions>
+
+                    <!-- Linux -->
+                    <execution>
+                        <id>copy-linux-native</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.outputDirectory}/native/linux-x86_64
+                            </outputDirectory>
+
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ../rust/target/x86_64-unknown-linux-gnu/release
+                                    </directory>
+
+                                    <includes>
+                                        <include>libyuvutils_jni.so</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <!-- Windows -->
+                    <execution>
+                        <id>copy-windows-native</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.outputDirectory}/native/windows-x86_64
+                            </outputDirectory>
+
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ../rust/target/x86_64-pc-windows-gnu/release
+                                    </directory>
+
+                                    <includes>
+                                        <include>yuvutils_jni.dll</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                    <!-- Mac -->
+                    <execution>
+                        <id>copy-mac-native</id>
+                        <phase>generate-resources</phase>
+
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.outputDirectory}/native/macos-aarch64
+                            </outputDirectory>
+
+                            <resources>
+                                <resource>
+                                    <directory>
+                                        ../rust/target/aarch64-apple-darwin/release
+                                    </directory>
+
+                                    <includes>
+                                        <include>libyuvutils_jni.dylib</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

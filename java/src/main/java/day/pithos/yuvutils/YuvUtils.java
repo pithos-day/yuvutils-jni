@@ -14,21 +14,44 @@ public class YuvUtils {
 
     private static void load() {
         try {
-            String libName = "libyuvutils_jni.so";
+            String os = System.getProperty("os.name").toLowerCase();
+
+            String platform;
+            String libName;
+
+            if (os.contains("win")) {
+                platform = "windows-x86_64";
+                libName = "yuvutils_jni.dll";
+
+            } else if (os.contains("mac")) {
+                platform = "macos-aarch64";
+                libName = "libyuvutils_jni.dylib";
+
+            } else {
+                platform = "linux-x86_64";
+                libName = "libyuvutils_jni.so";
+            }
+
+            String resourcePath =
+                    "/native/" + platform + "/" + libName;
+
+            System.out.println("Loading native lib: " + resourcePath);
 
             InputStream in =
-                    YuvUtils.class.getResourceAsStream(
-                            "/natives/linux-x86_64/" + libName
-                    );
+                    YuvUtils.class.getResourceAsStream(resourcePath);
 
             if (in == null) {
-                throw new RuntimeException("Native library not found");
+                throw new RuntimeException(
+                        "Native library not found: " + resourcePath
+                );
             }
 
             Path temp = Files.createTempFile(
-                    "yuvutils",
-                    ".so"
+                    "yuvutils-",
+                    libName
             );
+
+            temp.toFile().deleteOnExit();
 
             Files.copy(
                     in,
